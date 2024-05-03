@@ -1,8 +1,9 @@
-package database_software;
+
 import java.io.*;
 import java.net.*;
 
 public class JabberServer {
+    public static String readyA="ra",readyL="rl",readyG="rg";
     public static final int PORT = 8080;
     public static void main (String[] args)
 
@@ -24,6 +25,9 @@ public class JabberServer {
                         if (str.equals("END")){
                             break;
                         }
+                        else if (str.equals("ADD")){
+                            get_file(in, out);
+                        }
                         System.out.println("Catch : "+str);
                         out.println(str);
                     }
@@ -34,8 +38,23 @@ public class JabberServer {
             
             }finally{
                 s.close();
+                
             }
+           
         }
+
+    public  static void get_file(BufferedReader in,PrintWriter out) throws IOException {
+        out.println(readyA);
+        String line;
+        String out_file = in.readLine();
+        PrintWriter file_writer = new PrintWriter(new BufferedWriter(new FileWriter(out_file)));
+        out.println(readyA);
+        while((line = in.readLine()) != null){
+        if(line.equals("EOF")) break;
+        file_writer.println(line);
+        }
+        file_writer.close();   
     }
+}
     
 
