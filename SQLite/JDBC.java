@@ -1,5 +1,6 @@
 package SQLite;
 import java.sql.*;
+import java.time.*;
 
 public class JDBC {
 
@@ -14,12 +15,20 @@ public class JDBC {
         return result;
     }
     
-    public static void file_insert(int file_id,String filename,int user_id,String made_time,String update_time){
-        String sql = "INSERT INTO file VALUES("+String.valueOf(file_id)+",'"+filename+"'','"+String.valueOf(file_id)+"'','"+made_time+"'','"+update_time+"');";
+    public static void file_insert(String filename,int user_id){
+        int file_id=Integer.parseInt(file_count())+1;
+        String made_time=String.valueOf(LocalDateTime.now());
+        System.out.println(String.valueOf(file_id)+",'"+filename+"',"+String.valueOf(user_id)+",'"+made_time+"','"+made_time);
+        String sql = "INSERT INTO file VALUES("+String.valueOf(file_id)+",'"+filename+"',"+String.valueOf(user_id)+",'"+made_time+"','"+made_time+"');";
         sql(sql,1,"");
     }
 
-    public static String file_over(){
+    public static String file_count(){
+        String sql="SELECT * FROM file;";
+        return sql(sql, 3,""); 
+    }
+
+    public static String file_look(){
         String sql="SELECT * FROM file;";
         return sql(sql, 0,""); 
     }
@@ -43,14 +52,9 @@ public class JDBC {
                 return "done"; 
             }else if (mode==0){
                 ResultSet rs =st.executeQuery(sql);
-                rs.first();
                 StringBuilder s = new StringBuilder();
-                while(true){
+                while(rs.next()){
                     s.append(rs.getString("file_name"));
-                    if (rs.isLast()){
-                        break;
-                    }
-                    rs.next();
                 }
                 return ""+s;
             }else if(mode==-1){

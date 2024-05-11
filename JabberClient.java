@@ -31,7 +31,6 @@ throws IOException {
             System.out.print("!");
             String msg=in.readLine();
             if(msg.equals("log_in_success")){
-                System.out.println(in.readLine());
                 break;
             }
             System.out.println(msg);
@@ -39,10 +38,10 @@ throws IOException {
             out.println(get);
         }
 
-        
-        System.out.println("モードを選んでください");
-        System.out.println("ファイル追加:ADD    ファイル閲覧:LOOK   ファイル取得:GET");
         while(true){
+            System.out.println("モードを選んでください");
+            System.out.println("ファイル追加:ADD    ファイル閲覧:LOOK   ファイル取得:GET");
+        
             String get = sc.nextLine();
             out.println(get); // データ送信
             String str = in.readLine(); 
@@ -54,7 +53,6 @@ throws IOException {
             }else if (str.equals(readyG)){
                 out.println(readyG);
             }
-            System.out.println("確認"+str);
             if (get.equals("END")){
                 break;
             }
@@ -79,12 +77,10 @@ throws IOException {
             Matcher file_match = file_name_regex.matcher(origin_filename);
             if (file_match.matches()){
                 String filename=file_match.group(1);
-                System.out.println("you send:"+filename+"\n");
+                System.out.println("you send filename:"+filename+"\n");
                 out.println(filename);
                 if(in.readLine().equals(readyA)){
-                
                     String rep=origin_filename.replaceAll("\\\"", "");
-                    System.out.println("kakuninn"+rep+"\n");
                     BufferedReader file_reader=new BufferedReader(new FileReader(rep));
                     while((line=file_reader.readLine())!=null){
                         out.println(line);

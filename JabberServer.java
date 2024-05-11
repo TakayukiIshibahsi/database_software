@@ -29,17 +29,15 @@ public class JabberServer {
                         return;
                     }
                     out.println("log_in_success");
-                    out.println("your id:"+String.valueOf(id));
+                    System.out.println("id:"+String.valueOf(id));
                     while (true) {
                         String str = in.readLine();
                         if (str.equals("END")){
                             break;
                         }
                         else if (str.equals("ADD")){
-                            get_file(in, out);
+                            get_file(in, out, id);
                         }
-                        System.out.println("Catch : "+str);
-                        out.println(str);
                     }
                 }finally{
                     System.out.println("closing...");
@@ -61,17 +59,18 @@ public class JabberServer {
 
 
         
-    public  static void get_file(BufferedReader in,PrintWriter out) throws IOException {
+    public  static void get_file(BufferedReader in,PrintWriter out,int id) throws IOException {
         out.println(readyA);
         String line;
-        String out_file = in.readLine();
+        String out_file_name = in.readLine();
         
-        PrintWriter file_writer = new PrintWriter(new BufferedWriter(new FileWriter(out_file)));
+        PrintWriter file_writer = new PrintWriter(new BufferedWriter(new FileWriter("./data/"+out_file_name)));
         out.println(readyA);
         while((line = in.readLine()) != null){
         if(line.equals("EOF")) break;
         file_writer.println(line);
         }
+        JDBC.file_insert(out_file_name,id);
         file_writer.close();   
     }
 
@@ -91,13 +90,13 @@ LOOP:       while(true){
                     out.println("名前を入力してください");
                     String name=in.readLine();
                     String password=JDBC.user_search(name,"password");
+                    System.out.println(name+" : "+password);
                     if (password!="failed"){
                        while (true) {
                             out.println("パスワードを入力してください");
                             String pass=in.readLine();  
                             if (password.equals(pass)){
                                 int id =Integer.parseInt(JDBC.user_search(name,"id"));
-                                System.out.println(id);
                                 return id;
                             }else{
                                 out.println("パスワードが正しくありません");
