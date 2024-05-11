@@ -24,8 +24,22 @@ throws IOException {
                 new BufferedWriter(
                     new OutputStreamWriter(
                         socket.getOutputStream())), true); // 送信バッファ設定
-
+        
         Scanner sc = new Scanner(System.in);
+
+        while (true) {
+            System.out.print("!");
+            String msg=in.readLine();
+            if(msg.equals("log_in_success")){
+                System.out.println(in.readLine());
+                break;
+            }
+            System.out.println(msg);
+            String get = sc.nextLine();
+            out.println(get);
+        }
+
+        
         System.out.println("モードを選んでください");
         System.out.println("ファイル追加:ADD    ファイル閲覧:LOOK   ファイル取得:GET");
         while(true){
