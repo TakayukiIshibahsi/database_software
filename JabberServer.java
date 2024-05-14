@@ -2,18 +2,37 @@
 
 import java.io.*;
 import java.net.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import SQLite.JDBC;
-
+import SQLite.JDBC.User;
 
 public class JabberServer {
     public static String readyA="ra",readyL="rl",readyG="rg";
     public static final int PORT = 8080;
+    public static String path;
     public static void main (String[] args)
 
     throws IOException {
         ServerSocket s = new ServerSocket(PORT);
         System.out.println("Started:"+s);
+
+        //ディレクトリの作成
+        Path p1 = Paths.get("");  //カレントディレクトリの相対パスを取得
+        Path current_dir = p1.toAbsolutePath();  //カレントディレクトリの絶対パスを取得
+        String datas_path_String = current_dir.toString() + "/server_files/";  //絶対パスを文字列にし、datasディレクトリを追加
+        Path datas_path = Paths.get(datas_path_String);  //文字列からパスへ
+        path = datas_path_String + "/";   //ファイル保存時のために"/"を追加"
+        if(!Files.exists(datas_path)) {
+            try{
+                Files.createDirectory(datas_path);
+            }catch(IOException e){
+                System.out.println(e);
+            }
+        }
+
         try{
             Socket socket = s.accept();
             try{
@@ -23,7 +42,9 @@ public class JabberServer {
 
                     PrintWriter out = new PrintWriter(
                         new OutputStreamWriter(socket.getOutputStream()),true);
-                    int id = log_in(in, out);
+                    User user = log_in(in, out);
+                    user.show();
+                    int id = user.id; 
                     if (id==-1){
                         out.println("ログインに失敗しました。");
                         return;
@@ -37,6 +58,15 @@ public class JabberServer {
                         }
                         else if (str.equals("ADD")){
                             get_file(in, out, id);
+                        }
+                        else if (str.equals("LOOK")){
+                            file_list(in, out);
+                        }
+                        else if (str.equals("GET")){
+                            send_file(in, out);
+                        }
+                        else{
+                            out.println(str);
                         }
                     }
                 }finally{
@@ -64,7 +94,7 @@ public class JabberServer {
         String line;
         String out_file_name = in.readLine();
         
-        PrintWriter file_writer = new PrintWriter(new BufferedWriter(new FileWriter("./data/"+out_file_name)));
+        PrintWriter file_writer = new PrintWriter(new BufferedWriter(new FileWriter("./server_files/"+out_file_name)));
         out.println(readyA);
         while((line = in.readLine()) != null){
         if(line.equals("EOF")) break;
@@ -74,14 +104,41 @@ public class JabberServer {
         file_writer.close();   
     }
 
+    public static void file_list(BufferedReader in,PrintWriter out)throws IOException{
+        out.println(readyL);
+        String str = in.readLine();
+        if (str.equals(readyL)){
+            out.println("file list");
+            String list = JDBC.file_look();
+            out.println(list);
+            out.println("end");
+            
+        } 
+    }
+
+    public static void send_file(BufferedReader in,PrintWriter out) throws IOException {
+        out.println(readyG);
+        String line;
+        String send_file = path + in.readLine();
+        //ここに要求されたファイル名が存在するかの分岐を追加
+        
+        //ファイル読み込み
+        if (in.readLine().equals(readyG)) {
+            BufferedReader file_reader=new BufferedReader(new FileReader(send_file));
+            while((line=file_reader.readLine())!=null){
+                out.println(line);
+            }
+            out.println("EOF");
+            file_reader.close();
+        } else{
+            System.out.println("you entered undefined file");
+        }
+    }
 
 
 
 
-
-
-
-    public static int log_in(BufferedReader in,PrintWriter out){
+    public static User log_in(BufferedReader in,PrintWriter out){
         out.println("新規登録:new ログイン:in");
         try{
             String j=in.readLine();
@@ -97,7 +154,8 @@ LOOP:       while(true){
                             String pass=in.readLine();  
                             if (password.equals(pass)){
                                 int id =Integer.parseInt(JDBC.user_search(name,"id"));
-                                return id;
+                                User user = new User(id,name,password);
+                                return user;
                             }else{
                                 out.println("パスワードが正しくありません");
                                 break LOOP;
@@ -115,15 +173,16 @@ LOOP:       while(true){
                 String password=in.readLine();
                 int id = Integer
                 .parseInt(JDBC.number_of_member())+1;
-                JDBC.user_insert(id,name,password);
-                return id;
+                User user = new User(id,name,password);
+                user.insert();
+                return user;
             }
             
         }
         }catch (IOException e){
             System.out.println("failed");
         }
-        return -1;
+        return null;
 
     }
 }

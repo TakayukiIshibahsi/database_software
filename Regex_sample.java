@@ -1,12 +1,21 @@
+import java.util.Scanner;
 import java.util.regex.*;
 
 public class Regex_sample {
     public static void main(String[] args) {
-        String str = "C:\\Users\\Takayuki Ishibashi\\Documents\\hobby\\Go\\ch02\\hellomr\\hellomr.go";
-        Pattern regex_sam= Pattern.compile(".*[\\\\](\\w+\\.\\w+)");
-        Matcher match = regex_sam.matcher(str);
-        if (match.matches()){
-            System.out.println(match.group(1));
+        Scanner sc = new Scanner(System.in);
+        String str =sc.nextLine();
+        
+        Pattern file_name_regex_windows=Pattern.compile("\\\".*[\\\\]([^\\\\]+\\.\\w+)\\\"");
+        
+        Matcher match2 = null;
+        if(file_name_regex_windows.matcher(str).find()) {
+            match2 = file_name_regex_windows.matcher(str);
         }
+        if (match2.matches()){
+            System.out.println(match2.group(1)+" second");
+            System.out.println(match2.matches());
+        }
+        sc.close();
     }
 }

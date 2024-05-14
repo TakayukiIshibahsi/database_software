@@ -54,7 +54,7 @@ public class JDBC {
                 ResultSet rs =st.executeQuery(sql);
                 StringBuilder s = new StringBuilder();
                 while(rs.next()){
-                    s.append(rs.getString("file_name"));
+                    s.append(rs.getString("file_name")+"\n");
                 }
                 return ""+s;
             }else if(mode==-1){
@@ -93,6 +93,30 @@ public class JDBC {
         }
         return "failed";
     }    
+
+
+    public static class User {
+        public int id;
+        public String name;
+        public String password;
+    
+        public User(int id,String name,String password){
+            this.id=id;
+            this.name=name;
+            this.password=password;
+        }
+        
+        public void show(){
+            System.out.println("id:"+String.valueOf(this.id));
+            System.out.println("name:"+name);
+            System.out.println("password:"+password);
+        }
+    
+        public void insert(){
+            JDBC.user_insert(this.id, this.name, this.password);
+        } 
+    
+    }
 
 }
 

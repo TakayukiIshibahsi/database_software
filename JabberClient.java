@@ -1,11 +1,15 @@
 
 import java.io.*;
 import java.net.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Scanner;
 import java.util.regex.*;
 public class JabberClient {
 
 public static String readyA="ra",readyL="rl",readyG="rg";
+public static String path;
 public static void main(String[] args)
 throws IOException {
     
@@ -13,6 +17,20 @@ throws IOException {
     InetAddress.getByName("localhost"); // IPアドレスへの変換
     System.out.println("addr = " + addr);
     Socket socket = new Socket(addr, JabberServer.PORT); // ソケットの生成
+
+    Path p1 = Paths.get("");  //カレントディレクトリの相対パスを取得
+    Path current_dir = p1.toAbsolutePath();  //カレントディレクトリの絶対パスを取得
+    String datas_path_String = current_dir.toString() + "/client_files/";  //絶対パスを文字列にし、datasディレクトリを追加
+    Path datas_path = Paths.get(datas_path_String);  //文字列からパスへ
+    path = datas_path_String + "/";   //ファイル保存時のために"/"を追加"
+    if(!Files.exists(datas_path)) {
+        try{
+            Files.createDirectory(datas_path);
+        }catch(IOException e){
+            System.out.println(e);
+        }
+    }
+
     try {
     System.out.println("socket = " + socket);
         BufferedReader in =
@@ -44,14 +62,15 @@ throws IOException {
         
             String get = sc.nextLine();
             out.println(get); // データ送信
-            String str = in.readLine(); 
+            String str = in.readLine();  //確認用
             
             if(str.equals(readyA)){
                 send(in, out,sc);
             }else if (str.equals(readyL)){
                 out.println(readyL);
+                look_file(in, out, sc);
             }else if (str.equals(readyG)){
-                out.println(readyG);
+                get(in,out,sc);
             }
             if (get.equals("END")){
                 break;
@@ -67,7 +86,15 @@ throws IOException {
         }
     }
 
-
+    public static void look_file(BufferedReader in,PrintWriter out,Scanner sc)throws IOException{
+        while(true){
+            String accept = in.readLine();
+            if (accept=="end"){
+                break;
+            }
+            System.out.println(accept);
+        }
+    }
 
     public static void send(BufferedReader in,PrintWriter out,Scanner sc)throws IOException{
         String line;
@@ -92,4 +119,19 @@ throws IOException {
                 System.out.println("you entered undefined file");
             }
     } 
+    
+    public static void get(BufferedReader in,PrintWriter out,Scanner sc) throws IOException {
+        String line;
+        System.out.print("Get File Name: ");
+        String get_filename = sc.nextLine();
+        PrintWriter file_writer = new PrintWriter(new BufferedWriter(new FileWriter(path+get_filename)));
+        out.println(get_filename);
+        out.println(readyG); //ファイル作成完了の確認。ファイル作成後にファイル名送信しているので、なくていい
+
+        while((line = in.readLine()) != null){
+            if(line.equals("EOF")) break;
+            file_writer.println(line);
+        }
+        file_writer.close(); 
+    }
 }
