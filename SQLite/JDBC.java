@@ -28,6 +28,19 @@ public class JDBC {
         return sql(sql, 3,""); 
     }
 
+    public static String file_user_id_search(String name){
+        String sql = "select user_id from file where file_name = '"+name+"';";
+        return  sql(sql,-1,"user_id");
+    }
+
+    public static String file_delete(String name,int id){
+        if (id!=Integer.parseInt(file_user_id_search(name))){
+            return "you don't have permit";
+        }
+        String sql="DELETE FROM file where file_name = '"+name+"';";
+        return sql(sql,1,"");
+    }
+
     public static String file_look(){
         String sql="SELECT * FROM file;";
         return sql(sql, 0,""); 
@@ -61,11 +74,10 @@ public class JDBC {
                 ResultSet rs =st.executeQuery(sql);
                 StringBuilder s = new StringBuilder();
                 while(rs.next()){
-                    if (search!="id"){
-                        s.append(rs.getString(search));
-                    }else{
-                        
+                    if (search.contains("id")){                     
                         s.append(String.valueOf(rs.getInt(search)));
+                    }else{
+                        s.append(rs.getString(search));
                     }
                 return s+"";
                 }

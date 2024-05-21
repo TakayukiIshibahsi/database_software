@@ -10,7 +10,7 @@ import SQLite.JDBC;
 import SQLite.JDBC.User;
 
 public class JabberServer {
-    public static String readyA="ra",readyL="rl",readyG="rg";
+    public static String readyA="ra",readyL="rl",readyG="rg",readyD="rd";
     public static final int PORT = 8080;
     public static String path;
     public static void main (String[] args)
@@ -65,6 +65,9 @@ public class JabberServer {
                         else if (str.equals("GET")){
                             send_file(in, out);
                         }
+                        else if (str.equals("DEL")){
+                            delete_file(in, out, id);
+                        }
                         else{
                             out.println(str);
                         }
@@ -85,7 +88,17 @@ public class JabberServer {
 
 
 
-
+    public static void delete_file(BufferedReader in,PrintWriter out,int id)throws IOException{
+        out.println(readyD);
+        String str=in.readLine();
+        if(str.equals(readyD)){
+            out.println("削除したいファイル名を指定してください。\n(アップロードしたユーザしか削除できません。)");
+            String delete_file_name=in.readLine();
+            System.out.print(JDBC.file_delete(delete_file_name, id));
+        }else{
+            System.out.println("クライエント側の準備ができていません");
+        }
+    }
 
 
         

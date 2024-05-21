@@ -8,7 +8,7 @@ import java.util.Scanner;
 import java.util.regex.*;
 public class JabberClient {
 
-public static String readyA="ra",readyL="rl",readyG="rg";
+public static String readyA="ra",readyL="rl",readyG="rg",readyD="rd";
 public static String path;
 public static void main(String[] args)
 throws IOException {
@@ -58,7 +58,7 @@ throws IOException {
 
         while(true){
             System.out.println("モードを選んでください");
-            System.out.println("ファイル追加:ADD    ファイル閲覧:LOOK   ファイル取得:GET");
+            System.out.println("ファイル追加:ADD    ファイル閲覧:LOOK   ファイル取得:GET  ファイル削除:DEL");
         
             String get = sc.nextLine();
             out.println(get); // データ送信
@@ -71,7 +71,10 @@ throws IOException {
                 look_file(in, out, sc);
             }else if (str.equals(readyG)){
                 get(in,out,sc);
+            }else if (str.equals(readyD)){
+                delete(in,out,sc);
             }
+
             if (get.equals("END")){
                 break;
             }
@@ -94,6 +97,13 @@ throws IOException {
             }
             System.out.println(accept);
         }
+    }
+    
+    public static void delete(BufferedReader in,PrintWriter out,Scanner sc)throws IOException{
+        out.println(readyD);
+        System.out.println(in.readLine());
+        String delete_file_name=sc.nextLine();
+        out.println(delete_file_name);
     }
 
     public static void send(BufferedReader in,PrintWriter out,Scanner sc)throws IOException{
