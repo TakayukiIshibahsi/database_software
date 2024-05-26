@@ -121,8 +121,10 @@ public class JabberServer {
             while((line = in.readLine()) != null){
                 if(line.equals("EOF")) break;
                 file_writer.println(line);                
-                file_writer.close();
+                
             }
+            file_writer.close();
+
         }else{
             if (id==Integer.parseInt(result)){
                 System.out.println("get_file.id:"+result);
@@ -131,8 +133,9 @@ public class JabberServer {
                 while((line = in.readLine()) != null){
                 if(line.equals("EOF")) break;
                 file_writer.println(line);
-                file_writer.close();
+                
                 }
+                file_writer.close();
             }else{
                 System.out.println("ファイルを更新する権限がありません");
             }
