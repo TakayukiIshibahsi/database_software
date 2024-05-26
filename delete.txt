@@ -1,0 +1,19 @@
+サーバ側のみ。クライアント側はできてそうだったので
+
+public static void delete_file(BufferedReader in,PrintWriter out, int id)throws IOException{
+    out.println(readyD);
+    String str=in.readLine();
+    if(str.equals(readyD)){
+        out.println("削除したいファイル名を指定してください。(アップロードしたユーザしか削除できません。)");
+        String delete_file_name=in.readLine();
+        File delete_file = new File(String.format("./server_files/" + delete_file_name));
+        if(!delete_file.exists()) {
+            System.out.println("File Not Found");
+        } else if(delete_file.delete()) {
+            System.out.println("File Deleted");
+        }
+        System.out.print(JDBC.file_delete(delete_file_name, id));
+    }else{
+        System.out.println("クライエント側の準備ができていません");
+    }
+}

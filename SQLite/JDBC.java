@@ -15,6 +15,18 @@ public class JDBC {
         return result;
     }
     
+    public static String file_update(String filename){
+        String sql = "SELECT user_id FROM file WHERE file_name='"+filename+"';" ;
+        String result=sql(sql,-1,"user_id");
+        if (result.equals("failed")){
+            return "NE";
+        }else{
+            System.out.println("file_update"+result);
+            return result;
+        }
+
+    }
+
     public static void file_insert(String filename,int user_id){
         int file_id=Integer.parseInt(file_count())+1;
         String made_time=String.valueOf(LocalDateTime.now());
@@ -29,7 +41,7 @@ public class JDBC {
     }
 
     public static String file_user_id_search(String name){
-        String sql = "select user_id from file where file_name = '"+name+"';";
+        String sql = "select * from file where file_name = '"+name+"';";
         return  sql(sql,-1,"user_id");
     }
 

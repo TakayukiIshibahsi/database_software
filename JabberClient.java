@@ -58,7 +58,7 @@ throws IOException {
 
         while(true){
             System.out.println("モードを選んでください");
-            System.out.println("ファイル追加:ADD    ファイル閲覧:LOOK   ファイル取得:GET  ファイル削除:DEL");
+            System.out.println("ファイル追加:ADD    ファイル閲覧:LOOK   ファイル取得:GET  \nファイル削除:DEL  終了:END");
         
             String get = sc.nextLine();
             out.println(get); // データ送信
@@ -90,13 +90,16 @@ throws IOException {
     }
 
     public static void look_file(BufferedReader in,PrintWriter out,Scanner sc)throws IOException{
+        String accept="";
         while(true){
-            String accept = in.readLine();
-            if (accept=="end"){
+            
+            accept = in.readLine();
+            if(accept.equals("|EOF|")){
                 break;
             }
             System.out.println(accept);
         }
+        
     }
     
     public static void delete(BufferedReader in,PrintWriter out,Scanner sc)throws IOException{

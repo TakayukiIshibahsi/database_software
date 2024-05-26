@@ -92,8 +92,14 @@ public class JabberServer {
         out.println(readyD);
         String str=in.readLine();
         if(str.equals(readyD)){
-            out.println("削除したいファイル名を指定してください。\n(アップロードしたユーザしか削除できません。)");
+            out.println("削除したいファイル名を指定してください。(アップロードしたユーザしか削除できません。)");
             String delete_file_name=in.readLine();
+            File delete_file = new File(String.format("./server_files/" + delete_file_name));
+            if(!delete_file.exists()) {
+            System.out.println("File Not Found");
+            } else if(delete_file.delete()) {
+            System.out.println("File Deleted");
+        }
             System.out.print(JDBC.file_delete(delete_file_name, id));
         }else{
             System.out.println("クライエント側の準備ができていません");
@@ -106,25 +112,43 @@ public class JabberServer {
         out.println(readyA);
         String line;
         String out_file_name = in.readLine();
-        
-        PrintWriter file_writer = new PrintWriter(new BufferedWriter(new FileWriter("./server_files/"+out_file_name)));
-        out.println(readyA);
-        while((line = in.readLine()) != null){
-        if(line.equals("EOF")) break;
-        file_writer.println(line);
+        String result = JDBC.file_update(out_file_name);
+        if(result=="NE"){
+            JDBC.file_insert(out_file_name,id);
+            System.out.println(result);
+            PrintWriter file_writer = new PrintWriter(new BufferedWriter(new FileWriter("./server_files/"+out_file_name)));
+            out.println(readyA);
+            while((line = in.readLine()) != null){
+                if(line.equals("EOF")) break;
+                file_writer.println(line);                
+                file_writer.close();
+            }
+        }else{
+            if (id==Integer.parseInt(result)){
+                System.out.println("get_file.id:"+result);
+                PrintWriter file_writer = new PrintWriter(new BufferedWriter(new FileWriter("./server_files/"+out_file_name)));
+                out.println(readyA);
+                while((line = in.readLine()) != null){
+                if(line.equals("EOF")) break;
+                file_writer.println(line);
+                file_writer.close();
+                }
+            }else{
+                System.out.println("ファイルを更新する権限がありません");
+            }
+
         }
-        JDBC.file_insert(out_file_name,id);
-        file_writer.close();   
+           
     }
 
     public static void file_list(BufferedReader in,PrintWriter out)throws IOException{
         out.println(readyL);
         String str = in.readLine();
         if (str.equals(readyL)){
-            out.println("file list");
+            out.println("--- file list ---");
             String list = JDBC.file_look();
             out.println(list);
-            out.println("end");
+            out.println("|EOF|");
             
         } 
     }
