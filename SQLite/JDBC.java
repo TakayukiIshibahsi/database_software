@@ -1,6 +1,7 @@
 package SQLite;
 import java.sql.*;
 import java.time.*;
+import java.util.regex.*;
 
 public class JDBC {
 
@@ -21,7 +22,10 @@ public class JDBC {
         if (result.equals("failed")){
             return "NE";
         }else{
-            System.out.println("file_update"+result);
+            String update_time = String.valueOf(LocalDateTime.now());
+            sql="UPDATE file SET update_time='"+update_time+"' WHERE file_name='"+filename+"';";
+            sql(sql,1,"");
+            System.out.println("file_update id:"+result);
             return result;
         }
 
@@ -76,10 +80,45 @@ public class JDBC {
                 st.executeUpdate(sql);
                 return "done"; 
             }else if (mode==0){
+                String regex="(\\d+)-(\\d+)-(\\d+)T(\\d+):(\\d+):(\\d+).*";
                 ResultSet rs =st.executeQuery(sql);
                 StringBuilder s = new StringBuilder();
+                int count=Integer.parseInt(file_count());
+                File2[] files=new File2[count] ;
+                int p=0;
+                //file_array
                 while(rs.next()){
-                    s.append(rs.getString("file_name")+"\n");
+                    File2 present_file = new File2(rs.getInt("file_id"),rs.getString("file_name"),rs.getInt("user_id"),rs.getString("create_time"),rs.getString("update_time"));
+                    files[p]=present_file;
+                    p++;
+                }
+                //sort
+                Pattern timep = Pattern.compile(regex);
+                for(int i=0;i<count-1;i++){
+                    boolean path=false;
+                    for(int j=0;j<count-1-i;j++){
+                        Matcher b = timep.matcher(files[j].update_time);
+                        Matcher a = timep.matcher(files[j+1].update_time);
+                        path=true;
+                        for(int k=0;k<6;k++){
+                            b.matches();
+                            a.matches();
+                            int bi =Integer.parseInt(b.group(k+1));
+                            int ai =Integer.parseInt(a.group(k+1));
+                            if(bi<ai){
+                                File2 temp=files[j];
+                                files[j]=files[j+1];
+                                files[j+1]=temp;
+                                path=false;
+                                break;
+                            }else if(bi>ai){
+                                break;
+                            }
+                        }
+                    }
+                }
+                for(int i=0;i<count;i++){
+                    s.append(files[i].file_name+"\n");
                 }
                 return ""+s;
             }else if(mode==-1){
@@ -140,6 +179,24 @@ public class JDBC {
             JDBC.user_insert(this.id, this.name, this.password);
         } 
     
+    }
+
+    public static class File2{
+        public int file_id;
+        public String file_name;
+        public int user_id;
+        public String create_time;
+        public String update_time;
+
+        public File2(int file_id,String file_name,int user_id,String create_time,String update_time){
+            this.file_id=file_id;
+            this.file_name=file_name;
+            this.user_id=user_id;
+            this.create_time=create_time;
+            this.update_time=update_time;
+        }
+
+
     }
 
 }
