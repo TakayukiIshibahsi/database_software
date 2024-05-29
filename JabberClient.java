@@ -12,11 +12,13 @@ public static String readyA="ra",readyL="rl",readyG="rg",readyD="rd";
 public static String path;
 public static void main(String[] args)
 throws IOException {
-    
+    Scanner sc = new Scanner(System.in);
+    System.out.println("Enter IP Address");
+    String IP=sc.nextLine();
     InetAddress addr =  
-    InetAddress.getByName("localhost"); // IPアドレスへの変換
+    InetAddress.getByName(IP); // IPアドレスへの変換
     System.out.println("addr = " + addr);
-    Socket socket = new Socket(addr, JabberServer.PORT); // ソケットの生成
+    Socket socket = new Socket(addr, 8080); // ソケットの生成
 
     Path p1 = Paths.get("");  //カレントディレクトリの相対パスを取得
     Path current_dir = p1.toAbsolutePath();  //カレントディレクトリの絶対パスを取得
@@ -43,7 +45,7 @@ throws IOException {
                     new OutputStreamWriter(
                         socket.getOutputStream())), true); // 送信バッファ設定
         
-        Scanner sc = new Scanner(System.in);
+        
 
         while (true) {
             System.out.print("!");

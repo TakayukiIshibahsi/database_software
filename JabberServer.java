@@ -2,6 +2,7 @@
 
 import java.io.*;
 import java.net.*;
+import java.net.InetAddress;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -16,9 +17,10 @@ public class JabberServer {
     public static void main (String[] args)
 
     throws IOException {
+
         ServerSocket s = new ServerSocket(PORT);
         System.out.println("Started:"+s);
-
+        System.out.println("IP:"+InetAddress.getLocalHost());
         //ディレクトリの作成
         Path p1 = Paths.get("");  //カレントディレクトリの相対パスを取得
         Path current_dir = p1.toAbsolutePath();  //カレントディレクトリの絶対パスを取得
