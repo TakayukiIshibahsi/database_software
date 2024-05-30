@@ -25,7 +25,7 @@ public class JDBC {
             String update_time = String.valueOf(LocalDateTime.now());
             sql="UPDATE file SET update_time='"+update_time+"' WHERE file_name='"+filename+"';";
             sql(sql,1,"");
-            System.out.println("file_update id:"+result);
+            System.out.println("file_update need id:"+result);
             return result;
         }
 

@@ -59,7 +59,7 @@ throws IOException {
         }
 
         while(true){
-            System.out.println("モードを選んでください");
+            System.out.println("\nモードを選んでください");
             System.out.println("ファイル追加:ADD    ファイル閲覧:LOOK   ファイル取得:GET  \nファイル削除:DEL  終了:END");
         
             String get = sc.nextLine();
@@ -114,14 +114,19 @@ throws IOException {
     public static void send(BufferedReader in,PrintWriter out,Scanner sc)throws IOException{
         String line;
         Pattern file_name_regex=Pattern.compile("\\\".*[\\\\](\\w+\\.\\w+)\\\"");
+        Pattern file_name_regex_mac=Pattern.compile("\\\'.*[/](\\w+\\.\\w+)\\\'");
             System.out.println("ファイルのパスを指定してください。");
             String origin_filename=sc.nextLine();
             Matcher file_match = file_name_regex.matcher(origin_filename);
+            Matcher file_match_mac=file_name_regex_mac.matcher(origin_filename);
             if (file_match.matches()){
                 String filename=file_match.group(1);
                 System.out.println("you send filename:"+filename+"\n");
+               
                 out.println(filename);
-                if(in.readLine().equals(readyA)){
+                String confirm=in.readLine();
+
+                if(confirm.equals(readyA)){
                     String rep=origin_filename.replaceAll("\\\"", "");
                     BufferedReader file_reader=new BufferedReader(new FileReader(rep));
                     while((line=file_reader.readLine())!=null){
@@ -129,11 +134,32 @@ throws IOException {
                     }
                     out.println("EOF");
                     file_reader.close();
+                }else{
+                    System.out.println(confirm);
+                }
+            }else if(file_match_mac.matches()){
+                String filename=file_match.group(1);
+                System.out.println("you send filename:"+filename+"\n");
+                out.println(filename);
+                String confirm=in.readLine();
+                System.out.println(confirm);
+                if(confirm.equals(readyA)){
+                    String rep=origin_filename.replaceAll("\\\'", "");
+                    BufferedReader file_reader=new BufferedReader(new FileReader(rep));
+                    while((line=file_reader.readLine())!=null){
+                        out.println(line);
+                    }
+                    out.println("EOF");
+                    file_reader.close();
+                }else{
+                    System.out.println(confirm);
                 }
             }else{
                 System.out.println("you entered undefined file");
             }
     } 
+
+    
     
     public static void get(BufferedReader in,PrintWriter out,Scanner sc) throws IOException {
         String line;

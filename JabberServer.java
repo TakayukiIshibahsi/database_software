@@ -139,7 +139,8 @@ public class JabberServer {
                 }
                 file_writer.close();
             }else{
-                System.out.println("ファイルを更新する権限がありません");
+                
+                out.println("ファイルを更新する権限がありません\n");
             }
 
         }
@@ -150,7 +151,7 @@ public class JabberServer {
         out.println(readyL);
         String str = in.readLine();
         if (str.equals(readyL)){
-            out.println("--- file list ---");
+            out.println("\n--- file list ---");
             String list = JDBC.file_look();
             out.println(list);
             out.println("|EOF|");
